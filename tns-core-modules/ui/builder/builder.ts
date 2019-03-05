@@ -42,6 +42,7 @@ export function parseMultipleTemplates(value: string, context: any): Array<Keyed
 }
 
 export function load(pathOrOptions: string | LoadOptions, context?: any): View {
+    // debugger;
     let componentModule: ComponentModule;
     if (!context) {
         if (typeof pathOrOptions === "string") {
@@ -59,10 +60,14 @@ export function load(pathOrOptions: string | LoadOptions, context?: any): View {
 
 export function loadPage(moduleNamePath: string, fileName: string, context?: any): View {
     const componentModule = loadInternal(fileName, context, moduleNamePath);
-    return componentModule && componentModule.component;
+    // return
+    const comp = componentModule && componentModule.component;
+    comp.isRoot = "app-root";
+    return comp;
 }
 
 const loadModule = profile("loadModule", (moduleNamePath: string, entry: ViewEntry): ModuleExports => {
+    // debugger;
     // web-pack case where developers register their page JS file manually.
     if (global.moduleExists(entry.moduleName)) {
         return global.loadModule(entry.moduleName);
@@ -80,6 +85,7 @@ const loadModule = profile("loadModule", (moduleNamePath: string, entry: ViewEnt
 
 const viewFromBuilder = profile("viewFromBuilder", (moduleNamePath: string, moduleExports: any): View => {
     // Possible XML file path.
+    // debugger;
     const fileName = resolveFileName(moduleNamePath, "xml");
 
     // Attempts to implement https://github.com/NativeScript/NativeScript/issues/1311
@@ -96,7 +102,7 @@ export const createViewFromEntry = profile("createViewFromEntry", (entry: ViewEn
     } else if (entry.moduleName) {
         // Current app full path.
         const currentAppPath = knownFolders.currentApp().path;
-        
+
         // Full path of the module = current app full path + module name.
         const moduleNamePath = path.join(currentAppPath, entry.moduleName);
         const moduleExports = loadModule(moduleNamePath, entry);
@@ -108,7 +114,7 @@ export const createViewFromEntry = profile("createViewFromEntry", (entry: ViewEn
             return viewFromBuilder(moduleNamePath, moduleExports);
         }
     }
-    
+
     throw new Error("Failed to load page XML file for module: " + entry.moduleName);
 });
 
@@ -128,7 +134,7 @@ interface ModuleExports {
 const moduleCreateView = profile("module.createView", (moduleNamePath: string, moduleExports: ModuleExports): View => {
     const view = moduleExports.createPage();
     const cssFileName = resolveFileName(moduleNamePath, "css");
-    
+
     // If there is no cssFile only appCss will be applied at loaded.
     if (cssFileName) {
         view.addCssFile(cssFileName);

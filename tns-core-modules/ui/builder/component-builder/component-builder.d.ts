@@ -10,4 +10,5 @@ export function setPropertyValue(instance: View, instanceModuleExports: Object, 
 export interface ComponentModule {
     component: View;
     exports: any;
+    isRoot?: string; // yes equals module name, no equals undefined
 }

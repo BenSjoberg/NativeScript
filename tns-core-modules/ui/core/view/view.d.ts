@@ -104,6 +104,7 @@ export interface ShownModallyData extends EventData {
  * A View occupies a rectangular area on the screen and is responsible for drawing and layouting of all UI components within.
  */
 export abstract class View extends ViewBase {
+    isRoot?: string; // yes equals module name, no equals undefined
     /**
      * String value used when hooking to layoutChanged event.
      */

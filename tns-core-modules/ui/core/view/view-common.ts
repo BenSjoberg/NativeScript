@@ -63,6 +63,9 @@ export function PseudoClassHandler(...pseudoClasses: string[]): MethodDecorator 
 export const _rootModalViews = new Array<ViewBase>();
 
 export abstract class ViewCommon extends ViewBase implements ViewDefinition {
+
+    isRoot: string;
+
     public static layoutChangedEvent = "layoutChanged";
     public static shownModallyEvent = "shownModally";
     public static showingModallyEvent = "showingModally";
@@ -210,9 +213,14 @@ export abstract class ViewCommon extends ViewBase implements ViewDefinition {
         }
     }
 
-    _onLivesync(): boolean {
+    _onLivesync(context?: ModuleContext): boolean {
+        console.log(context);
         _rootModalViews.forEach(v => v.closeModal());
         _rootModalViews.length = 0;
+        if (context.path.includes(this.isRoot)) {
+            this.changeCssFile(context.path);
+            return true;
+        }
         return false;
     }
 
