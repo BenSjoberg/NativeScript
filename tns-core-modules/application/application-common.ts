@@ -80,6 +80,9 @@ export function setApplication(instance: iOSApplication | AndroidApplication): v
 }
 
 export function livesync(rootView: View, context?: ModuleContext) {
+    console.log("---> 1");
+    console.log("---> rootView", rootView);
+    console.log("---> context", context);
     events.notify(<EventData>{ eventName: "livesync", object: app });
     const liveSyncCore = global.__onLiveSyncCore;
     let reapplyAppStyles = false;

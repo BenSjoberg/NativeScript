@@ -226,6 +226,7 @@ class IOSApplication implements IOSApplicationDefinition {
     }
 
     public _onLivesync(context?: ModuleContext): void {
+        console.log("---> 3");
         // If view can't handle livesync set window controller.
         if (this._rootView && !this._rootView._onLivesync(context)) {
             this.setWindowContent();
@@ -233,6 +234,7 @@ class IOSApplication implements IOSApplicationDefinition {
     }
 
     public setWindowContent(view?: View): void {
+        console.log("---> 5");
         if (this._rootView) {
             // if we already have a root view, we reset it.
             this._rootView._onRootViewReset();
@@ -265,6 +267,7 @@ setApplication(iosApp);
 
 // attach on global, so it can be overwritten in NativeScript Angular
 (<any>global).__onLiveSyncCore = function (context?: ModuleContext) {
+    console.log("---> 2");
     iosApp._onLivesync(context);
 }
 
@@ -374,6 +377,7 @@ function setViewControllerView(view: View): void {
 }
 
 global.__onLiveSync = function __onLiveSync(context?: ModuleContext) {
+    console.log("---> 0");
     if (!started) {
         return;
     }

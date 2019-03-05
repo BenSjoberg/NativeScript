@@ -29,6 +29,13 @@ export abstract class TabViewItemBase extends ViewBase implements TabViewItemDef
         }
     }
 
+    public _onLivesync(context?: ModuleContext): boolean {
+        // super._onLivesync();
+
+        console.log("---> TabViewItemBase");
+        return true;
+    }
+
     get title(): string {
         return this._title;
     }
@@ -158,6 +165,13 @@ export class TabViewBase extends View implements TabViewDefinition, AddChildFrom
     get _childrenCount(): number {
         const items = this.items;
         return items ? items.length : 0;
+    }
+
+    public _onLivesync(context?: ModuleContext): boolean {
+        super._onLivesync();
+
+        console.log("---> TabViewBase");
+        return true;
     }
 
     public eachChild(callback: (child: ViewBase) => boolean) {

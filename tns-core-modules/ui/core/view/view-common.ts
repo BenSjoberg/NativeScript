@@ -210,7 +210,11 @@ export abstract class ViewCommon extends ViewBase implements ViewDefinition {
         }
     }
 
+    // View base
+    // check the tree
+
     _onLivesync(): boolean {
+        console.log("---> ViewCommon");
         _rootModalViews.forEach(v => v.closeModal());
         _rootModalViews.length = 0;
         return false;

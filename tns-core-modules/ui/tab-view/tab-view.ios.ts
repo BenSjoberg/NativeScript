@@ -13,6 +13,7 @@ import { profile } from "../../profiling";
 import { Frame } from "../frame";
 import { ios as iosUtils } from "../../utils/utils"
 import { device } from "../../platform";
+import { debug } from "util";
 export * from "./tab-view-common";
 
 const majorVersion = iosUtils.MajorVersion;
@@ -240,6 +241,7 @@ export class TabView extends TabViewBase {
 
     constructor() {
         super();
+        // debugger;
 
         this.viewController = this._ios = UITabBarControllerImpl.initWithOwner(new WeakRef(this));
         this.nativeViewProtected = this._ios.view;
@@ -247,11 +249,15 @@ export class TabView extends TabViewBase {
 
     initNativeView() {
         super.initNativeView();
+        // debugger;
+
         this._delegate = UITabBarControllerDelegateImpl.initWithOwner(new WeakRef(this));
         this._moreNavigationControllerDelegate = UINavigationControllerDelegateImpl.initWithOwner(new WeakRef(this));
     }
 
     disposeNativeView() {
+        // debugger;
+
         this._delegate = null;
         this._moreNavigationControllerDelegate = null;
         super.disposeNativeView();
@@ -260,6 +266,7 @@ export class TabView extends TabViewBase {
     @profile
     public onLoaded() {
         super.onLoaded();
+        // debugger;
 
         const selectedIndex = this.selectedIndex;
         const selectedView = this.items && this.items[selectedIndex] && this.items[selectedIndex].view;
@@ -271,12 +278,16 @@ export class TabView extends TabViewBase {
     }
 
     public onUnloaded() {
+        // debugger;
+
         this._ios.delegate = null;
         this._ios.moreNavigationController.delegate = null;
         super.onUnloaded();
     }
 
     get ios(): UITabBarController {
+        // debugger;
+
         return this._ios;
     }
 
@@ -289,6 +300,8 @@ export class TabView extends TabViewBase {
     }
 
     public onSelectedIndexChanged(oldIndex: number, newIndex: number): void {
+        debugger;
+
         const items = this.items;
         if (!items) {
             return;
@@ -313,6 +326,8 @@ export class TabView extends TabViewBase {
     }
 
     public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void {
+        // debugger;
+
         const width = layout.getMeasureSpecSize(widthMeasureSpec);
         const widthMode = layout.getMeasureSpecMode(widthMeasureSpec);
 
@@ -326,10 +341,12 @@ export class TabView extends TabViewBase {
     }
 
     public _onViewControllerShown(viewController: UIViewController) {
+
         // This method could be called with the moreNavigationController or its list controller, so we have to check.
         if (traceEnabled()) {
             traceWrite("TabView._onViewControllerShown(" + viewController + ");", traceCategories.Debug);
         }
+
         if (this._ios.viewControllers && this._ios.viewControllers.containsObject(viewController)) {
             this.selectedIndex = this._ios.viewControllers.indexOfObject(viewController);
         } else {
@@ -474,11 +491,68 @@ export class TabView extends TabViewBase {
         }
     }
 
+    public _onLivesync(context?: ModuleContext): boolean {
+        super._onLivesync();
+        debugger;
+
+        console.log("---> TabView");
+        console.log("---> this", this);
+        console.log("---> this.ios", this.ios);
+        console.log("---> this.viewController", this.viewController);
+        console.log("---> this.nativeViewProtected", this.nativeViewProtected);
+        console.log("---> this.nativeView", this.nativeView);
+        console.log("---> this.items", this.items);
+        console.log("---> this.selectedIndex", this.selectedIndex);
+
+        const items = this.items;
+        const selectedIndex = this.selectedIndex;
+
+        const item = items[selectedIndex];
+
+        // this.getViewController(item).viewControllers
+
+        // const length = items ? items.length : 0;
+        // if (length === 0) {
+        //     this._ios.viewControllers = null;
+        //     return;
+        // }
+
+        // const controllers = NSMutableArray.alloc<UIViewController>().initWithCapacity(length);
+        const states = getTitleAttributesForStates(this);
+
+        // items.forEach((item, i) => {
+            const controller = this.getViewController(item);
+            const icon = this._getIcon(item.iconSource);
+            const tabBarItem = UITabBarItem.alloc().initWithTitleImageTag((item.title || ""), icon, selectedIndex);
+            updateTitleAndIconPositions(item, tabBarItem, controller);
+
+            applyStatesToItem(tabBarItem, states);
+
+            controller.tabBarItem = tabBarItem;
+            // controllers.addObject(controller);
+            // (<TabViewItemDefinition>item).canBeLoaded = true;
+        // });
+
+        // this.viewController = controller;
+
+        // // const
+        // this.viewController = this._ios = UITabBarControllerImpl.initWithOwner(new WeakRef(this));
+        // this.nativeViewProtected = this._ios.view;
+
+        // this._ios.viewControllers = controllers;
+        // this._ios.customizableViewControllers = null;
+
+        // // When we set this._ios.viewControllers, someone is clearing the moreNavigationController.delegate, so we have to reassign it each time here.
+        // this._ios.moreNavigationController.delegate = this._moreNavigationControllerDelegate;
+
+        return true;
+    }
+
     [selectedIndexProperty.setNative](value: number) {
         if (traceEnabled()) {
             traceWrite("TabView._onSelectedIndexPropertyChangedSetNativeValue(" + value + ")", traceCategories.Debug);
         }
-
+        debugger;
         if (value > -1) {
             (<any>this._ios)._willSelectViewController = this._ios.viewControllers[value];
             this._ios.selectedIndex = value;
